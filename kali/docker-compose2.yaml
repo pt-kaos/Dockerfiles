@@ -1,0 +1,45 @@
+version: "1.0"
+
+# docker run -d \
+# --shm-size="1gb" \
+# --restart unless-stopped \
+
+services:
+  kali-linux:
+    image: lscr.io/linuxserver/kali-linux:latest
+    container_name: kali-linux
+    security-opt:
+      - seccomp=unconfined #optional
+    volumes:
+      - /home/pedro/Documents/Varios/Hacking/:/config/hacks
+    ports:
+      - 3030:3000
+      - 3031:3001
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - TZ="Europe/Lisbon"
+      - SUBFOLDER=/
+      - TITLE="Kali Linux"
+    devices:
+      - /dev/dri:/dev/dri #optional
+    shm-size: "1gb" #optional
+    restart: unless-stopped
+    networks:
+      - hackinglab
+      - default # connect kali to the default bridge network
+
+  web-dvwa:
+    image: vulnerable/web-dvwa
+    container_name: web-dvwa
+    networks:
+      - hackinglab
+    command: /bin/sh -c "while true; do sleep 30; done;" #keep the container running
+
+networks:
+  hackinglab:
+    driver: bridge
+    internal: true
+
+
+  
